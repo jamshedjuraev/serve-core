@@ -4,22 +4,18 @@ import (
 	"context"
 )
 
-const createEntry = `-- name: CreateEntry :one
-INSERT INTO entries (
-  account_id,
-  amount
-) VALUES (
-  $1, $2
-) RETURNING id, account_id, amount, created_at
-`
-
 type CreateEntryParams struct {
 	AccountID int64 `json:"account_id"`
 	Amount    int64 `json:"amount"`
 }
 
 func (q *Queries) CreateEntry(ctx context.Context, arg CreateEntryParams) (Entry, error) {
-	row := q.db.QueryRow(ctx, createEntry, arg.AccountID, arg.Amount)
+	row := q.db.QueryRow(ctx, 
+		`INSERT INTO entries (account_id, amount) 
+		VALUES ($1, $2) 
+		RETURNING id, account_id, amount, created_at`, 
+		arg.AccountID, arg.Amount,
+	)
 	var i Entry
 	err := row.Scan(
 		&i.ID,
@@ -29,14 +25,15 @@ func (q *Queries) CreateEntry(ctx context.Context, arg CreateEntryParams) (Entry
 	)
 	return i, err
 }
-
-const getEntry = `-- name: GetEntry :one
-SELECT id, account_id, amount, created_at FROM entries
-WHERE id = $1 LIMIT 1
-`
 
 func (q *Queries) GetEntry(ctx context.Context, id int64) (Entry, error) {
-	row := q.db.QueryRow(ctx, getEntry, id)
+	row := q.db.QueryRow(ctx, 
+		`SELECT id, account_id, amount, created_at 
+		FROM entries
+		WHERE id = $1 
+		LIMIT 1`, 
+		id,
+	)
 	var i Entry
 	err := row.Scan(
 		&i.ID,
@@ -46,14 +43,6 @@ func (q *Queries) GetEntry(ctx context.Context, id int64) (Entry, error) {
 	)
 	return i, err
 }
-
-const listEntries = `-- name: ListEntries :many
-SELECT id, account_id, amount, created_at FROM entries
-WHERE account_id = $1
-ORDER BY id
-LIMIT $2
-OFFSET $3
-`
 
 type ListEntriesParams struct {
 	AccountID int64 `json:"account_id"`
@@ -62,7 +51,15 @@ type ListEntriesParams struct {
 }
 
 func (q *Queries) ListEntries(ctx context.Context, arg ListEntriesParams) ([]Entry, error) {
-	rows, err := q.db.Query(ctx, listEntries, arg.AccountID, arg.Limit, arg.Offset)
+	rows, err := q.db.Query(ctx, 
+		`SELECT id, account_id, amount, created_at 
+		FROM entries
+		WHERE account_id = $1
+		ORDER BY id
+		LIMIT $2
+		OFFSET $3`, 
+		arg.AccountID, arg.Limit, arg.Offset,
+	)
 	if err != nil {
 		return nil, err
 	}
