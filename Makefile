@@ -1,4 +1,4 @@
-rundocker:
+run-docker:
 	@docker run -d --rm \
 		--name backend-master-class \
 		-e POSTGRES_USER=postgres \
@@ -7,11 +7,7 @@ rundocker:
 		-p 5433:5432 \
 		postgres:latest
 
-# postgres://POSTGRES_USER:POSTGRES_PASSWORD@localhost:5433/dbname?sslmode=disable
-migrateup:
-	migrate -path db/migration -database "postgres://postgres:postgres@localhost:5433/postgres?sslmode=disable" -verbose up
+run:
+	go run cmd/app/main.go
 
-migratedown:
-	migrate -path db/migration -database "postgres://postgres:postgres@localhost:5433/postgres?sslmode=disable" -verbose down
-
-.PHONY: rundocker migrateup migratedown
+.PHONY: run-docker run
