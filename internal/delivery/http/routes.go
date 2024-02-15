@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func InitHandler() *gin.Engine {
+func (h *Handler) InitHandler() *gin.Engine{
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 
@@ -14,14 +14,13 @@ func InitHandler() *gin.Engine {
 	// 	user.POST("")
 	// }
 
-	// task := router.Group("task")
-	// {
-	// 	task.POST("")
-	// 	task.GET("")
-	// 	task.GET("")
-	// 	task.PUT("")
-	// 	task.DELETE("")
-	// }
-
-	return router
+	task := router.Group("task")
+	{
+		task.POST("", h.createTask)
+		// task.GET("")
+		// task.GET("")
+		// task.PUT("")
+		// task.DELETE("")
+	}
+		return router
 }
