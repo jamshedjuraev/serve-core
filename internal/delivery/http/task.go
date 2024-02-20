@@ -60,3 +60,30 @@ func (h *Handler) getTaskByID(c *gin.Context) {
 
 	c.JSON(200, task)
 }
+
+func (h *Handler) updateTask(c *gin.Context) {
+	var params dto.TaskParams
+	idStr := c.Param("id")
+	
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+	
+	err = c.BindJSON(&params)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
+	params.TaskID = id
+
+	task, err := h.taskUC.Update(c, params)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
+	c.JSON(200, task)
+}

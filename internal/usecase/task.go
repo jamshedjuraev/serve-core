@@ -57,7 +57,12 @@ func (u *TaskUsecase) Get(ctx context.Context, p dto.TaskParams) (task *domain.T
 	if err = p.Validate(); err != nil {
 		return nil, err
 	}
-	
+
 	task, err = u.taskRepo.Get(ctx, p)
+	return
+}
+
+func (u *TaskUsecase) Update(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error) {
+	task, err = u.taskRepo.Update(ctx, p)
 	return
 }

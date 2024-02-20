@@ -50,3 +50,10 @@ func (r *TaskRepository) Get(ctx context.Context, p dto.TaskParams) (task *domai
 	err = q.Model(&domain.Task{}).First(&task, p.TaskID).Error
 	return
 }
+
+func (r *TaskRepository) Update(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error) {
+	q := r.db.WithContext(ctx)
+
+	err = q.Model(&domain.Task{}).Where("id = ?", p.TaskID).Updates(&task).Error
+	return
+}
