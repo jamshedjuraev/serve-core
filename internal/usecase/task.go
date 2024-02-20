@@ -8,8 +8,11 @@ import (
 	"github.com/JamshedJ/backend-master-class-course/internal/repository"
 )
 
+var _ TodoUsecase = (*TaskUsecase)(nil)
+
 type TaskUsecase struct {
 	taskRepo repository.TaskRepository
+	TodoUsecase
 }
 
 func NewTaskUsecase(taskRepo repository.TaskRepository) *TaskUsecase {

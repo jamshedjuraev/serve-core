@@ -8,5 +8,5 @@ import (
 )
 
 type TodoRepo interface {
-	Create(ctx context.Context, params dto.TaskParams) (task domain.Task, err error)
+	Create(ctx context.Context, params dto.TaskParams) (task *domain.Task, err error)
 }

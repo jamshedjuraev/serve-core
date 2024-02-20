@@ -8,8 +8,11 @@ import (
 	"gorm.io/gorm"
 )
 
+var _ TodoRepo = (*TaskRepository)(nil)
+
 type TaskRepository struct {
 	db *gorm.DB
+	TodoRepo
 }
 
 func NewTaskRepository(db *gorm.DB) *TaskRepository {
