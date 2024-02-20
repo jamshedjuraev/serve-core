@@ -8,17 +8,17 @@ import (
 	"github.com/JamshedJ/backend-master-class-course/internal/repository"
 )
 
-type TaskUseCase struct {
+type TaskUsecase struct {
 	taskRepo repository.TaskRepository
 }
 
-func NewTaskInteractor(taskRepo repository.TaskRepository) *TaskUseCase {
-	return &TaskUseCase{
+func NewTaskUsecase(taskRepo repository.TaskRepository) *TaskUsecase {
+	return &TaskUsecase{
 		taskRepo: taskRepo,
 	}
 }
 
-func (t *TaskUseCase) CreateTask(ctx context.Context, params dto.TaskParams) (task *domain.Task, err error) {
+func (t *TaskUsecase) Create(ctx context.Context, params dto.TaskParams) (task *domain.Task, err error) {
 	task, err = t.taskRepo.Create(ctx, params)
 	return 
 }

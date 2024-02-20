@@ -13,7 +13,7 @@ func (h *Handler) createTask(c *gin.Context) {
 		return
 	}
 
-	task, err := h.taskUseCase.CreateTask(c, params); 
+	task, err := h.taskUC.Create(c, params); 
 	if err != nil {
 		handleError(c, err)
 		return

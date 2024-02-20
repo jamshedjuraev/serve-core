@@ -1,4 +1,4 @@
-package repository
+package usecase
 
 import (
 	"context"
@@ -7,6 +7,6 @@ import (
 	"github.com/JamshedJ/backend-master-class-course/internal/domain"
 )
 
-type TodoRepo interface {
-	Create(ctx context.Context, params dto.TaskParams) (task domain.Task, err error)
+type TodoUsecase interface {
+	Create(ctx context.Context, params dto.TaskParams) (task *domain.Task, err error)
 }

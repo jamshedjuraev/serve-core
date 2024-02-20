@@ -17,8 +17,8 @@ func main() {
 	}
 
 	taskRepo := repository.NewTaskRepository(db)
-	taskInteractor := usecase.NewTaskInteractor(*taskRepo)
-	handler := http.NewHandler(*taskInteractor)
+	taskUsecase := usecase.NewTaskUsecase(*taskRepo)
+	handler := http.NewHandler(*taskUsecase)
 	
 	router := handler.InitHandler()
 	if err := router.Run(":8080"); err != nil {

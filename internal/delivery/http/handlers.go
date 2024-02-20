@@ -6,12 +6,12 @@ import (
 )
 
 type Handler struct {
-	taskUseCase usecase.TaskUseCase	
+	taskUC usecase.TaskUsecase	
 }
 
-func NewHandler(taskUseCase usecase.TaskUseCase) *Handler {
+func NewHandler(taskUC usecase.TaskUsecase) *Handler {
 	return &Handler{
-		taskUseCase: taskUseCase,
+		taskUC: taskUC,
 	}
 }
 
