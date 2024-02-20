@@ -20,7 +20,7 @@ func (h *Handler) InitHandler() *gin.Engine{
 		task.GET("", h.getTasks)
 		task.GET("/:id", h.getTaskByID)
 		task.PUT("/:id", h.updateTask)
-		// task.DELETE("")
+		task.DELETE("/:id", h.deleteTask)
 	}
 		return router
 }

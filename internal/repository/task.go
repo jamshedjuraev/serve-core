@@ -22,7 +22,7 @@ func NewTaskRepository(db *gorm.DB) *TaskRepository {
 	}
 }
 
-func (r *TaskRepository) Create(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error) {
+func (r *TaskRepository) Create(ctx context.Context, p dto.CreateTaskParams) (task *domain.Task, err error) {
 	q := r.db.WithContext(ctx)
 
 	task = &domain.Task{
@@ -34,7 +34,14 @@ func (r *TaskRepository) Create(ctx context.Context, p dto.TaskParams) (task *do
 	return
 }
 
-func (r *TaskRepository) GetMany(ctx context.Context, p dto.TaskParams) (tasks []*domain.Task, err error) {
+func (r *TaskRepository) Get(ctx context.Context, p dto.GetTaskParams) (task *domain.Task, err error) {
+	q := r.db.WithContext(ctx)
+
+	err = q.Model(&domain.Task{}).First(&task, p.TaskID).Error
+	return
+}
+
+func (r *TaskRepository) GetMany(ctx context.Context, p dto.GetTasksParams) (tasks []*domain.Task, err error) {
 	q := r.db.WithContext(ctx)
 
 	if p.WithPagination {
@@ -45,16 +52,9 @@ func (r *TaskRepository) GetMany(ctx context.Context, p dto.TaskParams) (tasks [
 	return
 }
 
-func (r *TaskRepository) Get(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error) {
+func (r *TaskRepository) Update(ctx context.Context, id int, t *domain.Task) (err error) {
 	q := r.db.WithContext(ctx)
 
-	err = q.Model(&domain.Task{}).First(&task, p.TaskID).Error
-	return
-}
-
-func (r *TaskRepository) Update(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error) {
-	q := r.db.WithContext(ctx)
-
-	err = q.Model(&domain.Task{}).Where("id = ?", p.TaskID).Updates(&task).Error
+	err = q.Model(&domain.Task{}).Where("id = ?", id).Updates(&t).Error
 	return
 }

@@ -8,8 +8,8 @@ import (
 )
 
 type TodoRepo interface {
-	Create(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error)
-	GetMany(ctx context.Context, p dto.TaskParams) (tasks []*domain.Task, err error)
-	Get(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error)
-	Update(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error)
+	Create(ctx context.Context, p dto.CreateTaskParams) (task *domain.Task, err error)
+	Get(ctx context.Context, p dto.GetTaskParams) (task *domain.Task, err error)
+	GetMany(ctx context.Context, p dto.GetTasksParams) (tasks []*domain.Task, err error)
+	Update(ctx context.Context, id int, t *domain.Task) (err error)
 }
