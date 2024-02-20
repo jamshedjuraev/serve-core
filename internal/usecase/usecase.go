@@ -11,4 +11,5 @@ type TodoUsecase interface {
 	Create(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error)
 	GetMany(ctx context.Context, p dto.TaskParams) (list *domain.TaskList, err error)
 	Get(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error)
+	Update(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error)
 }

@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Check if TaskRepository implements TodoRepo
 var _ TodoRepo = (*TaskRepository)(nil)
 
 type TaskRepository struct {

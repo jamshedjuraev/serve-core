@@ -8,6 +8,7 @@ import (
 	"github.com/JamshedJ/backend-master-class-course/internal/repository"
 )
 
+// Check if TaskUsecase implements TodoUsecase
 var _ TodoUsecase = (*TaskUsecase)(nil)
 
 type TaskUsecase struct {
