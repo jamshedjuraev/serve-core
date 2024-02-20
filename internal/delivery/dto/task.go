@@ -3,6 +3,8 @@ package dto
 import "errors"
 
 type TaskParams struct {
+	TaskID int `json:"task_id"`
+
 	Title       string `json:"title"`
 	Description string `json:"description"`
 
@@ -20,6 +22,10 @@ func (p *TaskParams) Validate() error {
 		if p.PerPage < 10 {
 			p.PerPage = 10
 		}
+	}
+
+	if p.TaskID <= 0 {
+		return errors.New("task_id can't be 0 or negative number")
 	}
 
 	if p.Title == "" {

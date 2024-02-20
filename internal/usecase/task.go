@@ -21,13 +21,17 @@ func NewTaskUsecase(taskRepo repository.TaskRepository) *TaskUsecase {
 	}
 }
 
-func (t *TaskUsecase) Create(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error) {
-	task, err = t.taskRepo.Create(ctx, p)
+func (u *TaskUsecase) Create(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error) {
+	task, err = u.taskRepo.Create(ctx, p)
 	return
 }
 
-func (t *TaskUsecase) GetMany(ctx context.Context, p dto.TaskParams) (list *domain.TaskList, err error) {
-	tasks, err := t.taskRepo.GetMany(ctx, p)
+func (u *TaskUsecase) GetMany(ctx context.Context, p dto.TaskParams) (list *domain.TaskList, err error) {
+	if err = p.Validate(); err != nil {
+		return nil, err
+	}
+
+	tasks, err := u.taskRepo.GetMany(ctx, p)
 	if err != nil {
 		return nil, err
 	}
@@ -46,5 +50,14 @@ func (t *TaskUsecase) GetMany(ctx context.Context, p dto.TaskParams) (list *doma
 		Tasks: tasks,
 	}
 
+	return
+}
+
+func (u *TaskUsecase) Get(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error) {
+	if err = p.Validate(); err != nil {
+		return nil, err
+	}
+	
+	task, err = u.taskRepo.Get(ctx, p)
 	return
 }

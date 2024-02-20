@@ -17,8 +17,8 @@ func (h *Handler) InitHandler() *gin.Engine{
 	task := router.Group("/task")
 	{
 		task.POST("", h.createTask)
-		task.GET("", )
-		// task.GET("")
+		task.GET("", h.getTasks)
+		task.GET("/:id", h.getTaskByID)
 		// task.PUT("")
 		// task.DELETE("")
 	}

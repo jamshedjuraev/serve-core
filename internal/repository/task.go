@@ -22,12 +22,14 @@ func NewTaskRepository(db *gorm.DB) *TaskRepository {
 }
 
 func (r *TaskRepository) Create(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error) {
+	q := r.db.WithContext(ctx)
+
 	task = &domain.Task{
 		Title:       p.Title,
 		Description: p.Description,
 	}
 
-	err = r.db.WithContext(ctx).Create(&task).Error
+	err = q.Model(&domain.Task{}).Create(&task).Error
 	return
 }
 
@@ -38,6 +40,13 @@ func (r *TaskRepository) GetMany(ctx context.Context, p dto.TaskParams) (tasks [
 		q = q.Offset(p.Offset()).Limit(p.PerPage)
 	}
 
-	err = q.Find(&tasks).Error
+	err = q.Model(&domain.Task{}).Find(&tasks).Error
+	return
+}
+
+func (r *TaskRepository) Get(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error) {
+	q := r.db.WithContext(ctx)
+
+	err = q.Model(&domain.Task{}).First(&task, p.TaskID).Error
 	return
 }

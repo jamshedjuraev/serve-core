@@ -1,6 +1,8 @@
 package http
 
 import (
+	"strconv"
+
 	"github.com/JamshedJ/backend-master-class-course/internal/delivery/dto"
 	"github.com/gin-gonic/gin"
 )
@@ -37,4 +39,24 @@ func (h *Handler) getTasks(c *gin.Context) {
 	}
 
 	c.JSON(200, tasks)
+}
+
+func (h *Handler) getTaskByID(c *gin.Context) {
+	idStr := c.Param("id")
+	
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
+	task, err := h.taskUC.Get(c, dto.TaskParams{
+		TaskID: id,
+	})
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
+	c.JSON(200, task)
 }

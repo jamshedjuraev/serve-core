@@ -10,4 +10,5 @@ import (
 type TodoRepo interface {
 	Create(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error)
 	GetMany(ctx context.Context, p dto.TaskParams) (tasks []*domain.Task, err error)
+	Get(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error)
 }
