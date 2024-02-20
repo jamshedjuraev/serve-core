@@ -21,3 +21,20 @@ func (h *Handler) createTask(c *gin.Context) {
 
 	c.JSON(201, task)
 }
+
+func (h *Handler) getTasks(c *gin.Context) {
+	var params dto.TaskParams
+	err := c.BindQuery(&params)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
+	tasks, err := h.taskUC.GetMany(c, params)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
+
+	c.JSON(200, tasks)
+}

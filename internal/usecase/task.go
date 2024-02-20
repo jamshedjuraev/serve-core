@@ -21,7 +21,30 @@ func NewTaskUsecase(taskRepo repository.TaskRepository) *TaskUsecase {
 	}
 }
 
-func (t *TaskUsecase) Create(ctx context.Context, params dto.TaskParams) (task *domain.Task, err error) {
-	task, err = t.taskRepo.Create(ctx, params)
-	return 
+func (t *TaskUsecase) Create(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error) {
+	task, err = t.taskRepo.Create(ctx, p)
+	return
+}
+
+func (t *TaskUsecase) GetMany(ctx context.Context, p dto.TaskParams) (list *domain.TaskList, err error) {
+	tasks, err := t.taskRepo.GetMany(ctx, p)
+	if err != nil {
+		return nil, err
+	}
+
+	var pages int
+	if !p.WithPagination {
+		p.Page = 1
+		pages = 1
+	} else {
+		pages = (len(tasks) / p.PerPage) + 1
+	}
+
+	list = &domain.TaskList{
+		Page: p.Page,
+		Pages: pages,
+		Tasks: tasks,
+	}
+
+	return
 }

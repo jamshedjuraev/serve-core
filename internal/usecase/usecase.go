@@ -8,5 +8,6 @@ import (
 )
 
 type TodoUsecase interface {
-	Create(ctx context.Context, params dto.TaskParams) (task *domain.Task, err error)
+	Create(ctx context.Context, p dto.TaskParams) (task *domain.Task, err error)
+	GetMany(ctx context.Context, p dto.TaskParams) (list *domain.TaskList, err error)
 }

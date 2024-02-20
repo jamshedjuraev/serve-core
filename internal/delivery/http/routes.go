@@ -14,10 +14,10 @@ func (h *Handler) InitHandler() *gin.Engine{
 	// 	user.POST("")
 	// }
 
-	task := router.Group("task")
+	task := router.Group("/task")
 	{
 		task.POST("", h.createTask)
-		// task.GET("")
+		task.GET("", )
 		// task.GET("")
 		// task.PUT("")
 		// task.DELETE("")
