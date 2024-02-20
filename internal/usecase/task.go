@@ -69,6 +69,10 @@ func (u *TaskUsecase) GetMany(ctx context.Context, p dto.GetTasksParams) (list *
 }
 
 func (u *TaskUsecase) Update(ctx context.Context, p dto.UpdateTaskParams) (task *domain.Task, err error) {
+	if err = p.Validate(); err != nil {
+		return nil, err
+	}
+
 	task = &domain.Task{
 		Title:       p.Title,
 		Description: p.Description,
@@ -84,6 +88,10 @@ func (u *TaskUsecase) Update(ctx context.Context, p dto.UpdateTaskParams) (task 
 }
 
 func (u *TaskUsecase) Delete(ctx context.Context, p dto.DeleteTaskParams) (err error) {
+	if err = p.Validate(); err != nil {
+		return err
+	}
+	
 	isDeleted := true
 	deletedAt := time.Now().UTC()
 
