@@ -8,11 +8,11 @@ func (h *Handler) InitHandler() *gin.Engine{
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 
-	// user := router.Group("/auth")
-	// {
-	// 	user.POST("")
-	// 	user.POST("")
-	// }
+	user := router.Group("/auth")
+	{
+		user.POST("/sign-up", h.signup)
+		user.POST("")
+	}
 
 	task := router.Group("/task")
 	{

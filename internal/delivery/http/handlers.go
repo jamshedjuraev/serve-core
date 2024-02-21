@@ -7,6 +7,7 @@ import (
 
 type Handler struct {
 	taskUC usecase.TaskUsecase	
+	userUC usecase.UserUsecase
 }
 
 func NewHandler(taskUC usecase.TaskUsecase) *Handler {
