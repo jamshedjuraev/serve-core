@@ -11,7 +11,7 @@ func (h *Handler) InitHandler() *gin.Engine{
 	user := router.Group("/auth")
 	{
 		user.POST("/sign-up", h.signup)
-		user.POST("")
+		user.POST("/sign-in", h.signin)
 	}
 
 	task := router.Group("/task")

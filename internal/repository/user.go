@@ -18,7 +18,7 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 	}
 }
 
-func (r *UserRepository) Signup(ctx context.Context, p dto.SignupParams) (err error) {
+func (r *UserRepository) Create(ctx context.Context, p dto.AuthParams) (err error) {
 	q := r.db.WithContext(ctx)
 
 	var user = &domain.User{
@@ -27,5 +27,12 @@ func (r *UserRepository) Signup(ctx context.Context, p dto.SignupParams) (err er
 	}
 
 	err = q.Model(&domain.User{}).Create(&user).Error
+	return
+}
+
+func (r *UserRepository) Get(ctx context.Context, p dto.AuthParams) (user *domain.User, err error) {
+	q := r.db.WithContext(ctx)
+
+	err = q.Model(&domain.User{}).Where("username = ?", p.Username).First(&user).Error
 	return
 }
