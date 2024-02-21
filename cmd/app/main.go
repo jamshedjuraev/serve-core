@@ -16,9 +16,9 @@ func main() {
 		log.Fatal("error initialize DB")
 	}
 
-	taskRepo := repository.NewTaskRepository(db)
-	taskUsecase := usecase.NewTaskUsecase(*taskRepo)
-	handler := http.NewHandler(*taskUsecase)
+	repo := repository.NewRepository(db)
+	usecase := usecase.NewUsecase(*repo)
+	handler := http.NewHandler(*usecase)
 	
 	router := handler.InitHandler()
 	if err := router.Run(":8080"); err != nil {

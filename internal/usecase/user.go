@@ -8,38 +8,26 @@ import (
 
 	"github.com/JamshedJ/backend-master-class-course/internal/delivery/dto"
 	"github.com/JamshedJ/backend-master-class-course/internal/domain"
-	"github.com/JamshedJ/backend-master-class-course/internal/repository"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 // Check if UserUsecase implements AuthUsecase
-var _ AuthUsecase = (*UserUsecase)(nil)
+var _ AuthUsecase = (*Usecase)(nil)
 
-type UserUsecase struct {
-	userRepo repository.UserRepository
-	AuthUsecase
-}
-
-func NewUserRepository(userRepo repository.UserRepository) *UserUsecase {
-	return &UserUsecase{
-		userRepo: userRepo,
-	}
-}
-
-func (u *UserUsecase) Signup(ctx context.Context, p dto.AuthParams) (err error) {
+func (u *Usecase) Signup(ctx context.Context, p dto.AuthParams) (err error) {
 	if err = p.Validate(); err != nil {
 		return err
 	}
-	err = u.userRepo.Create(ctx, p)
+	err = u.repo.CreateUser(ctx, p)
 	return
 }
 
-func (u *UserUsecase) AuthenticateUser(ctx context.Context, p dto.AuthParams) (user *domain.User, err error) {
+func (u *Usecase) AuthenticateUser(ctx context.Context, p dto.AuthParams) (user *domain.User, err error) {
 	if err = p.Validate(); err != nil {
 		return nil, err
 	}
 
-	user, err = u.userRepo.Get(ctx, p)
+	user, err = u.repo.GetUser(ctx, p)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +38,7 @@ func (u *UserUsecase) AuthenticateUser(ctx context.Context, p dto.AuthParams) (u
 	return
 }
 
-func (u *UserUsecase) ParseToken(ctx context.Context, jwtStr string) (claims *dto.JWTClaims, err error) {
+func (u *Usecase) ParseToken(ctx context.Context, jwtStr string) (claims *dto.JWTClaims, err error) {
 	token, err := jwt.ParseWithClaims(jwtStr, &dto.JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte("secret"), nil
 	})

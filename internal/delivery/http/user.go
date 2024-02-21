@@ -16,7 +16,7 @@ func (h *Handler) signup(c *gin.Context) {
 		return
 	}
 
-	err := h.userUC.Signup(c, params)
+	err := h.usecase.Signup(c, params)
 	if err != nil {
 		handleError(c, err)
 		return
@@ -32,7 +32,7 @@ func (h *Handler) signin(c *gin.Context) {
 		return
 	}
 
-	u, err := h.userUC.AuthenticateUser(c, params)
+	u, err := h.usecase.AuthenticateUser(c, params)
 	if err != nil {
 		handleError(c, err)
 		return
