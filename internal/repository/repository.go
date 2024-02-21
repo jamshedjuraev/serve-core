@@ -13,3 +13,8 @@ type TodoRepo interface {
 	GetMany(ctx context.Context, p dto.GetTasksParams) (tasks []*domain.Task, err error)
 	Update(ctx context.Context, id int, t *domain.Task) (err error)
 }
+
+type UserRepo interface {
+	Create(ctx context.Context, p dto.AuthParams) (err error)
+	Get(ctx context.Context, p dto.AuthParams) (user *domain.User, err error)
+}

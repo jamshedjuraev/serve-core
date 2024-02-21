@@ -12,8 +12,12 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+// Check if UserUsecase implements AuthUsecase
+var _ AuthUsecase = (*UserUsecase)(nil)
+
 type UserUsecase struct {
 	userRepo repository.UserRepository
+	AuthUsecase
 }
 
 func NewUserRepository(userRepo repository.UserRepository) *UserUsecase {

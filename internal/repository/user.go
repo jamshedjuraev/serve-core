@@ -8,8 +8,12 @@ import (
 	"gorm.io/gorm"
 )
 
+// Check if UserRepository implements UserRepo
+var _ UserRepo = (*UserRepository)(nil)
+
 type UserRepository struct {
 	db *gorm.DB
+	UserRepo
 }
 
 func NewUserRepository(db *gorm.DB) *UserRepository {
