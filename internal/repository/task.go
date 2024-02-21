@@ -26,6 +26,7 @@ func (r *TaskRepository) Create(ctx context.Context, p dto.CreateTaskParams) (ta
 	q := r.db.WithContext(ctx)
 
 	task = &domain.Task{
+		UserID:      p.UserID,
 		Title:       p.Title,
 		Description: p.Description,
 	}
@@ -48,7 +49,7 @@ func (r *TaskRepository) GetMany(ctx context.Context, p dto.GetTasksParams) (tas
 		q = q.Offset(p.Offset()).Limit(p.PerPage)
 	}
 
-	err = q.Model(&domain.Task{}).Find(&tasks).Error
+	err = q.Model(&domain.Task{}).Where("user_id = ?", p.UserID).Find(&tasks).Error
 	return
 }
 

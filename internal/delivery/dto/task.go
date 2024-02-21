@@ -1,13 +1,20 @@
 package dto
 
-import "errors"
+import (
+	"errors"
+)
 
 type CreateTaskParams struct {
+	UserID      string `json:"-"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
 
 func (p *CreateTaskParams) Validate() error {
+	if p.UserID == "" {
+		return errors.New("user_id cannot be empty")
+	}
+
 	if p.Title == "" {
 		return errors.New("title is required")
 	}
@@ -20,20 +27,25 @@ func (p *CreateTaskParams) Validate() error {
 }
 
 type GetTaskParams struct {
-	TaskID int `json:"task_id"`
+	TaskID int    `json:"task_id"`
+	UserID string `json:"-"`
 }
 
 func (p *GetTaskParams) Validate() error {
 	if p.TaskID <= 0 {
 		return errors.New("task_id cannot be less then 1")
 	}
+	if p.UserID == "" {
+		return errors.New("user_id cannot be empty")
+	}
 	return nil
 }
 
 type GetTasksParams struct {
-	WithPagination bool `json:"with_pagination"`
-	Page           int  `json:"page"`
-	PerPage        int  `json:"per_page"`
+	UserID         string `json:"-"`
+	WithPagination bool   `json:"with_pagination"`
+	Page           int    `json:"page"`
+	PerPage        int    `json:"per_page"`
 }
 
 func (p *GetTasksParams) Validate() error {
@@ -45,6 +57,10 @@ func (p *GetTasksParams) Validate() error {
 			p.PerPage = 10
 		}
 	}
+
+	if p.UserID == "" {
+		return errors.New("user_id cannot be empty")
+	}
 	return nil
 }
 
@@ -54,6 +70,7 @@ func (p *GetTasksParams) Offset() int {
 
 type UpdateTaskParams struct {
 	TaskID      int    `json:"task_id"`
+	UserID      string `json:"-"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	IsDone      bool   `json:"is_done"`
@@ -74,6 +91,7 @@ func (p *UpdateTaskParams) Validate() error {
 
 type DeleteTaskParams struct {
 	TaskID int `json:"task_id"`
+	UserID string `json:"-"`
 }
 
 func (p *DeleteTaskParams) Validate() error {
