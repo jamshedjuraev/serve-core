@@ -80,11 +80,11 @@ func (p UpdateTaskParams) Validate() error {
 	if p.TaskID <= 0 {
 		return errors.New("task_id cannot be less then 1")
 	}
-	if p.Title == "" {
-		return errors.New("title is required")
+	if len(p.Title)  > 32 {
+		return errors.New("title cannot be more than 32 characters")
 	}
-	if p.Description == "" {
-		return errors.New("description is required")
+	if len(p.Description) > 255 {
+		return errors.New("description cannot be more than 255 characters")
 	}
 	if p.UserID == 0 {
 		return errors.New("user_id cannot be 0")
