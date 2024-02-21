@@ -28,6 +28,6 @@ type TodoRepo interface {
 }
 
 type UserRepo interface {
-	CreateUser(ctx context.Context, p dto.AuthParams) (err error)
+	CreateUser(ctx context.Context, u domain.User) (err error)
 	GetUser(ctx context.Context, p dto.AuthParams) (user *domain.User, err error)
 }

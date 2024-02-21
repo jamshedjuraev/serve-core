@@ -31,5 +31,5 @@ type TodoUsecase interface {
 type AuthUsecase interface {
 	Signup(ctx context.Context, p dto.AuthParams) (err error)
 	AuthenticateUser(ctx context.Context, p dto.AuthParams) (user *domain.User, err error)
-	ParseToken(ctx context.Context, jwtStr string) (claims *dto.JWTClaims, err error)
+	ParseToken(ctx context.Context, jwtStr string) (claims dto.JWTClaims, err error)
 }

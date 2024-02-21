@@ -18,7 +18,13 @@ func (u *Usecase) Signup(ctx context.Context, p dto.AuthParams) (err error) {
 	if err = p.Validate(); err != nil {
 		return err
 	}
-	err = u.repo.CreateUser(ctx, p)
+
+	user := domain.User{
+		Username: p.Username,
+		Password: generatePasswordHash(p.Password),
+	}
+
+	err = u.repo.CreateUser(ctx, user)
 	return
 }
 
@@ -38,12 +44,15 @@ func (u *Usecase) AuthenticateUser(ctx context.Context, p dto.AuthParams) (user 
 	return
 }
 
-func (u *Usecase) ParseToken(ctx context.Context, jwtStr string) (claims *dto.JWTClaims, err error) {
-	token, err := jwt.ParseWithClaims(jwtStr, &dto.JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
+func (u *Usecase) ParseToken(ctx context.Context, jwtStr string) (claims dto.JWTClaims, err error) {
+	token, err := jwt.ParseWithClaims(jwtStr, &claims, func(token *jwt.Token) (interface{}, error) {
+		if sm, ok := token.Method.(*jwt.SigningMethodHMAC); !ok || sm != jwt.SigningMethodHS256 {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
 		return []byte("secret"), nil
 	})
 	if err != nil || !token.Valid {
-		return nil, err
+		return claims, err
 	}
 	return
 }

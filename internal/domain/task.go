@@ -10,7 +10,7 @@ type TaskList struct {
 
 type Task struct {
 	ID          int       `json:"id,omitempty" gorm:"primaryKey"`
-	UserID      string    `json:"user_id" gorm:"not null"`
+	UserID      int       `json:"user_id" gorm:"not null"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	IsDone      bool      `json:"is_done"`

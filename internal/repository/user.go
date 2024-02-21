@@ -10,15 +10,10 @@ import (
 // Check if UserRepo implements UserRepo
 var _ UserRepo = (*Repository)(nil)
 
-func (r *Repository) CreateUser(ctx context.Context, p dto.AuthParams) (err error) {
+func (r *Repository) CreateUser(ctx context.Context, u domain.User) (err error) {
 	q := r.db.WithContext(ctx)
 
-	var user = &domain.User{
-		Username: p.Username,
-		Password: p.Password,
-	}
-
-	err = q.Model(&domain.User{}).Create(&user).Error
+	err = q.Model(&domain.User{}).Create(&u).Error
 	return
 }
 

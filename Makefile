@@ -10,4 +10,7 @@ run-docker:
 run:
 	go run cmd/app/main.go
 
-.PHONY: run-docker run
+stop-docker:
+	@docker stop backend-master-class
+
+.PHONY: run-docker run stop-docker
