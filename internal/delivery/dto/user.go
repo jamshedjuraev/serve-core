@@ -1,6 +1,11 @@
 package dto
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/JamshedJ/backend-master-class-course/internal/domain"
+	"github.com/golang-jwt/jwt/v5"
+)
 
 type AuthParams struct {
 	Username string `json:"username"`
@@ -16,4 +21,9 @@ func (p *AuthParams) Validate() error {
 		return errors.New("password is required")
 	}
 	return nil
+}
+
+type JWTClaims struct {
+	jwt.RegisteredClaims
+	User *domain.User
 }

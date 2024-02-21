@@ -9,6 +9,7 @@ import (
 	"github.com/JamshedJ/backend-master-class-course/internal/delivery/dto"
 	"github.com/JamshedJ/backend-master-class-course/internal/domain"
 	"github.com/JamshedJ/backend-master-class-course/internal/repository"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type UserUsecase struct {
@@ -41,6 +42,16 @@ func (u *UserUsecase) AuthenticateUser(ctx context.Context, p dto.AuthParams) (u
 
 	if !CheckUsersPasswordHash(user.Password, p.Password) {
 		return nil, errors.New("invalid password")
+	}
+	return
+}
+
+func (u *UserUsecase) ParseToken(ctx context.Context, jwtStr string) (claims *dto.JWTClaims, err error) {
+	token, err := jwt.ParseWithClaims(jwtStr, &dto.JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte("secret"), nil
+	})
+	if err != nil || !token.Valid {
+		return nil, err
 	}
 	return
 }

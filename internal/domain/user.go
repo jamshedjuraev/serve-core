@@ -2,8 +2,6 @@ package domain
 
 import (
 	"time"
-
-	"github.com/golang-jwt/jwt/v5"
 )
 
 type User struct {
@@ -12,9 +10,4 @@ type User struct {
 	Password  string    `json:"-"`
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoCreateTime"`
-}
-
-type JWTClaims struct {
-	jwt.RegisteredClaims
-	User *User
 }

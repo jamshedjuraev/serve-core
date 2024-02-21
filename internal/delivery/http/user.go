@@ -51,7 +51,7 @@ func (h *Handler) signin(c *gin.Context) {
 func generateToken(c *gin.Context, u *domain.User, signingKey []byte) (string, error) {
 	tokenTTL := 6 * time.Hour
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &domain.JWTClaims{
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &dto.JWTClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(tokenTTL)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
