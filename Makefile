@@ -1,22 +1,8 @@
-postgres-docker:
-	@docker run -d --rm \
-		--name backend-master-class \
-		-e POSTGRES_USER=postgres \
-		-e POSTGRES_PASSWORD=postgres \
-		-e POSTGRES_DB=postgres \
-		-p 5433:5432 \
-		postgres:latest
-
-nats-docker:
-	@docker run -d --rm \
-		--name nats-server \
-		-p 4222:4222 \
-		-p 6222:6222 \
-		-p 8222:8222 \
-		nats:latest
-
-stop-docker:
-	@docker stop backend-master-class nats-server
+# Инструкция по запуску сервиса локально:
+#	1) make up
+#	2) make nats-url
+#	3) make nats-kv
+# 	4) make run
 
 nats-url:
 	@echo "nats://localhost:4222"

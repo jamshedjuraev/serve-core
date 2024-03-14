@@ -29,7 +29,7 @@ func main() {
 	
 	kv := kvstore.NewNATSKVStore(os.Getenv("NATS_URL"))
 
-	// dsn := "postgres://postgres:postgres@localhost:5433/postgres"
+	// dsn := "postgres://user:password@localhost:5433/dbname"
 	dsn := kv.GetString("DATABASE_DSN")
 	db, err := repository.InitDB(dsn)
 	if err != nil {
