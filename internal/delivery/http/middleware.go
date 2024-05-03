@@ -10,7 +10,7 @@ import (
 func (h *Handler) Authenticate(c *gin.Context) {
 	token := c.GetHeader("Authorization")
 	token = strings.Replace(token, "Bearer ", "", 1)
-	claims, err := h.userUC.ParseToken(c, token)
+	claims, err := h.usecase.ParseToken(c, token)
 	if err != nil {
 		c.AbortWithStatusJSON(401, Response{Err: errors.New("cannot parse token").Error()})
 		return

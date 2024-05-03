@@ -1,0 +1,7 @@
+env: "local"
+storage_path: "./internal/repository/gorm.go"
+gorm_dsn: "postgres://postgres:postgres@localhost:5433/postgres"
+token_ttl: 1h
+http_server:
+  port: ":8080"
+

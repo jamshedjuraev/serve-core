@@ -8,50 +8,66 @@ import (
 
 	"github.com/JamshedJ/backend-master-class-course/internal/delivery/dto"
 	"github.com/JamshedJ/backend-master-class-course/internal/domain"
-	"github.com/JamshedJ/backend-master-class-course/internal/repository"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type UserUsecase struct {
-	userRepo repository.UserRepository
-}
+// Check if UserUsecase implements AuthUsecase
+var _ AuthUsecase = (*Usecase)(nil)
 
-func NewUserRepository(userRepo repository.UserRepository) *UserUsecase {
-	return &UserUsecase{
-		userRepo: userRepo,
-	}
-}
+func (u *Usecase) Signup(ctx context.Context, p dto.AuthParams) (err error) {
+	// logger := u.logger.With().Ctx(ctx).Str("method", "Signup").Logger()
 
-func (u *UserUsecase) Signup(ctx context.Context, p dto.AuthParams) (err error) {
 	if err = p.Validate(); err != nil {
-		return err
+		// logger.Error().Err(err).Msg("usecase.Signup p.Validate()")
+		return errors.Join(ErrValidationFailed, err)
 	}
-	err = u.userRepo.Create(ctx, p)
+
+	user := domain.User{
+		Username: p.Username,
+		Password: generatePasswordHash(p.Password),
+	}
+
+	err = u.repo.CreateUser(ctx, user)
+	if err != nil {
+		// logger.Error().Err(err).Msg("usecase.Signup u.repo.CreateUser()")
+	}
 	return
 }
 
-func (u *UserUsecase) AuthenticateUser(ctx context.Context, p dto.AuthParams) (user *domain.User, err error) {
+func (u *Usecase) AuthenticateUser(ctx context.Context, p dto.AuthParams) (user *domain.User, err error) {
+	// logger := u.logger.With().Ctx(ctx).Str("method", "AuthenticateUser").Logger()
+
 	if err = p.Validate(); err != nil {
-		return nil, err
+		// logger.Error().Err(err).Msg("usecase.AuthenticateUser p.Validate()")
+		return nil, errors.Join(ErrValidationFailed, err)
 	}
 
-	user, err = u.userRepo.Get(ctx, p)
+	user, err = u.repo.GetUser(ctx, p)
 	if err != nil {
-		return nil, err
+		// logger.Error().Err(err).Msg("usecase.AuthenticateUser u.repo.GetUser()")
+		return nil, errors.Join(ErrInternalDatabaseError, err)
 	}
 
 	if !CheckUsersPasswordHash(user.Password, p.Password) {
-		return nil, errors.New("invalid password")
+		// logger.Error().Err(err).Msg("usecase.AuthenticateUser CheckUsersPasswordHash()")
+		return nil, errors.Join(ErrInvalidPassword, err)
 	}
 	return
 }
 
-func (u *UserUsecase) ParseToken(ctx context.Context, jwtStr string) (claims *dto.JWTClaims, err error) {
-	token, err := jwt.ParseWithClaims(jwtStr, &dto.JWTClaims{}, func(token *jwt.Token) (interface{}, error) {
+func (u *Usecase) ParseToken(ctx context.Context, jwtStr string) (claims dto.JWTClaims, err error) {
+	// logger := u.logger.With().Ctx(ctx).Str("method", "ParseToken").Logger()
+
+	token, err := jwt.ParseWithClaims(jwtStr, &claims, func(token *jwt.Token) (interface{}, error) {
+		if sm, ok := token.Method.(*jwt.SigningMethodHMAC); !ok || sm != jwt.SigningMethodHS256 {
+			// logger.Error().Err(err).Msg("usecase.ParseToken jwt.ParseWithClaims()")
+			return nil, errors.New("unexpected signing method")
+		}
 		return []byte("secret"), nil
 	})
 	if err != nil || !token.Valid {
-		return nil, err
+		// logger.Error().Err(err).Msg("usecase.ParseToken jwt.ParseWithClaims()")
+		return claims, err
 	}
 	return
 }

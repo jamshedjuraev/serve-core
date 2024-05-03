@@ -9,8 +9,8 @@ import (
 )
 
 func (h *Handler) createTask(c *gin.Context) {
-	userID := c.GetString("user_id")
-
+	userID := c.GetInt("user_id")
+	
 	var params dto.CreateTaskParams
 	err := c.BindJSON(&params)
 	if err != nil {
@@ -20,7 +20,7 @@ func (h *Handler) createTask(c *gin.Context) {
 
 	params.UserID = userID
 
-	task, err := h.taskUC.Create(c, params)
+	task, err := h.usecase.CreateTask(c, params)
 	if err != nil {
 		handleError(c, err)
 		return
@@ -31,14 +31,14 @@ func (h *Handler) createTask(c *gin.Context) {
 
 func (h *Handler) getTaskByID(c *gin.Context) {
 	idStr := c.Param("id")
-	userID := c.GetString("user_id")
+	userID := c.GetInt("user_id")
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		c.JSON(400, gin.H{"error": errors.Join(errors.New("invalid value for id"), err).Error()})
 	}
 
-	task, err := h.taskUC.Get(c, dto.GetTaskParams{
+	task, err := h.usecase.GetTask(c, dto.GetTaskParams{
 		TaskID: id,
 		UserID: userID,
 	})
@@ -51,8 +51,8 @@ func (h *Handler) getTaskByID(c *gin.Context) {
 }
 
 func (h *Handler) getTasks(c *gin.Context) {
-	userID := c.GetString("user_id")
-
+	userID := c.GetInt("user_id")
+	
 	var params dto.GetTasksParams
 	err := c.BindQuery(&params)
 	if err != nil {
@@ -62,7 +62,7 @@ func (h *Handler) getTasks(c *gin.Context) {
 
 	params.UserID = userID
 
-	tasks, err := h.taskUC.GetMany(c, params)
+	tasks, err := h.usecase.GetManyTasks(c, params)
 	if err != nil {
 		handleError(c, err)
 		return
@@ -73,14 +73,14 @@ func (h *Handler) getTasks(c *gin.Context) {
 
 func (h *Handler) updateTask(c *gin.Context) {
 	idStr := c.Param("id")
-	userID := c.GetString("user_id")
-	var params dto.UpdateTaskParams
-
+	userID := c.GetInt("user_id")
+	
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		c.JSON(400, Response{Err: errors.Join(errors.New("invalid value for id"), err).Error()})
 	}
-
+	
+	var params dto.UpdateTaskParams
 	err = c.BindJSON(&params)
 	if err != nil {
 		handleError(c, err)
@@ -90,7 +90,7 @@ func (h *Handler) updateTask(c *gin.Context) {
 	params.TaskID = id
 	params.UserID = userID
 
-	task, err := h.taskUC.Update(c, params)
+	task, err := h.usecase.UpdateTask(c, params)
 	if err != nil {
 		handleError(c, err)
 		return
@@ -101,14 +101,14 @@ func (h *Handler) updateTask(c *gin.Context) {
 
 func (h *Handler) deleteTask(c *gin.Context) {
 	idStr := c.Param("id")
-	userID := c.GetString("user_id")
+	userID := c.GetInt("user_id")
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		c.JSON(400, Response{Err: errors.Join(errors.New("invalid value for id"), err).Error()})
 	}
 
-	err = h.taskUC.Delete(c, dto.DeleteTaskParams{
+	err = h.usecase.DeleteTask(c, dto.DeleteTaskParams{
 		TaskID: id,
 		UserID: userID,
 	})

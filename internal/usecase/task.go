@@ -2,53 +2,60 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/JamshedJ/backend-master-class-course/internal/delivery/dto"
 	"github.com/JamshedJ/backend-master-class-course/internal/domain"
-	"github.com/JamshedJ/backend-master-class-course/internal/repository"
 )
 
-// Check if TaskUsecase implements TodoUsecase
-var _ TodoUsecase = (*TaskUsecase)(nil)
+// Check if Usecase implements TodoUsecase
+var _ TodoUsecase = (*Usecase)(nil)
 
-type TaskUsecase struct {
-	taskRepo repository.TaskRepository
-	TodoUsecase
-}
+func (u *Usecase) CreateTask(ctx context.Context, p dto.CreateTaskParams) (task *domain.Task, err error) {
+	// logger := u.logger.With().Ctx(ctx).Str("method", "CreateTask").Int("user_id", p.UserID).Logger()
 
-func NewTaskUsecase(taskRepo repository.TaskRepository) *TaskUsecase {
-	return &TaskUsecase{
-		taskRepo: taskRepo,
-	}
-}
-
-func (u *TaskUsecase) Create(ctx context.Context, p dto.CreateTaskParams) (task *domain.Task, err error) {
 	if err = p.Validate(); err != nil {
-		return nil, err
+		// logger.Error().Err(err).Msg("usecase.CreateTask p.Validate()")
+		return nil, errors.Join(ErrValidationFailed, err)
 	}
 
-	task, err = u.taskRepo.Create(ctx, p)
-	return
-}
-
-func (u *TaskUsecase) Get(ctx context.Context, p dto.GetTaskParams) (task *domain.Task, err error) {
-	if err = p.Validate(); err != nil {
-		return nil, err
-	}
-
-	task, err = u.taskRepo.Get(ctx, p)
-	return
-}
-
-func (u *TaskUsecase) GetMany(ctx context.Context, p dto.GetTasksParams) (list *domain.TaskList, err error) {
-	if err = p.Validate(); err != nil {
-		return nil, err
-	}
-
-	tasks, err := u.taskRepo.GetMany(ctx, p)
+	task, err = u.repo.CreateTask(ctx, p)
 	if err != nil {
-		return nil, err
+		// logger.Error().Err(err).Msg("usecase.CreateTask u.repo.CreateTask()")
+		return nil, errors.Join(ErrInternalDatabaseError, err)
+	}
+	return
+}
+
+func (u *Usecase) GetTask(ctx context.Context, p dto.GetTaskParams) (task *domain.Task, err error) {
+	// logger := u.logger.With().Ctx(ctx).Str("method", "GetTask").Int("task_id", p.TaskID).Logger()
+	
+	if err = p.Validate(); err != nil {
+		// logger.Error().Err(err).Msg("usecase.GetTask p.Validate()")
+		return nil, errors.Join(ErrValidationFailed, err)
+	}
+
+	task, err = u.repo.GetTask(ctx, p)
+	if err != nil {
+		// logger.Error().Err(err).Msg("usecase.GetTask u.repo.GetTask()")
+		return nil, errors.Join(ErrInternalDatabaseError, err)
+	}
+	return
+}
+
+func (u *Usecase) GetManyTasks(ctx context.Context, p dto.GetTasksParams) (list *domain.TaskList, err error) {
+	// logger := u.logger.With().Ctx(ctx).Str("method", "GetManyTasks").Int("user_id", p.UserID).Logger()
+
+	if err = p.Validate(); err != nil {
+		// logger.Error().Err(err).Msg("usecase.GetManyTasks p.Validate()")
+		return nil, errors.Join(ErrValidationFailed, err)
+	}
+
+	tasks, err := u.repo.GetManyTasks(ctx, p)
+	if err != nil {
+		// logger.Error().Err(err).Msg("usecase.GetManyTasks u.repo.GetManyTasks()")
+		return nil, errors.Join(ErrInternalDatabaseError, err)
 	}
 
 	var pages int
@@ -64,13 +71,15 @@ func (u *TaskUsecase) GetMany(ctx context.Context, p dto.GetTasksParams) (list *
 		Pages: pages,
 		Tasks: tasks,
 	}
-
 	return
 }
 
-func (u *TaskUsecase) Update(ctx context.Context, p dto.UpdateTaskParams) (task *domain.Task, err error) {
+func (u *Usecase) UpdateTask(ctx context.Context, p dto.UpdateTaskParams) (task *domain.Task, err error) {
+	// logger := u.logger.With().Ctx(ctx).Str("method", "UpdateTask").Int("task_id", p.TaskID).Logger()
+
 	if err = p.Validate(); err != nil {
-		return nil, err
+		// logger.Error().Err(err).Msg("usecase.UpdateTask p.Validate()")
+		return nil, errors.Join(ErrValidationFailed, err)
 	}
 
 	task = &domain.Task{
@@ -79,25 +88,32 @@ func (u *TaskUsecase) Update(ctx context.Context, p dto.UpdateTaskParams) (task 
 		IsDone:      p.IsDone,
 	}
 
-	err = u.taskRepo.Update(ctx, p.TaskID, task)
+	err = u.repo.UpdateTask(ctx, p.TaskID, task)
 	if err != nil {
-		return nil, err
+		// logger.Error().Err(err).Msg("usecase.UpdateTask u.repo.UpdateTask()")
+		return nil, errors.Join(ErrInternalDatabaseError)
 	}
-
 	return
 }
 
-func (u *TaskUsecase) Delete(ctx context.Context, p dto.DeleteTaskParams) (err error) {
+func (u *Usecase) DeleteTask(ctx context.Context, p dto.DeleteTaskParams) (err error) {
+	// logger := u.logger.With().Ctx(ctx).Str("method", "DeleteTask").Int("task_id", p.TaskID).Logger()
+
 	if err = p.Validate(); err != nil {
-		return err
+		// logger.Error().Err(err).Msg("usecase.DeleteTask p.Validate()")
+		return errors.Join(ErrValidationFailed, err)
 	}
-	
+
 	isDeleted := true
 	deletedAt := time.Now().UTC()
 
-	err = u.taskRepo.Update(ctx, p.TaskID, &domain.Task{
+	err = u.repo.UpdateTask(ctx, p.TaskID, &domain.Task{
 		IsDeleted: &isDeleted,
 		DeletedAt: &deletedAt,
 	})
+	if err != nil {
+		// logger.Error().Err(err).Msg("usecase.DeleteTask u.repo.UpdateTask()")
+		return errors.Join(ErrInternalDatabaseError, err)
+	}
 	return
 }

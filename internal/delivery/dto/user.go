@@ -8,6 +8,7 @@ import (
 )
 
 type AuthParams struct {
+	UserID   string `json:"-"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
