@@ -1,15 +1,12 @@
 package main
 
 import (
-	"os"
+	"log"
 
+	"github.com/JamshedJ/backend-master-class-course/internal/config"
 	"github.com/JamshedJ/backend-master-class-course/internal/delivery/http"
 	"github.com/JamshedJ/backend-master-class-course/internal/repository"
 	"github.com/JamshedJ/backend-master-class-course/internal/usecase"
-	"github.com/JamshedJ/backend-master-class-course/pkg/glog"
-	"github.com/JamshedJ/backend-master-class-course/pkg/kvstore"
-	"github.com/JamshedJ/backend-master-class-course/pkg/natsClient"
-	"github.com/nats-io/nats.go"
 )
 
 const (
@@ -17,32 +14,20 @@ const (
 )
 
 func main() {
-	logger := glog.NewTracingLogger()
-	
-	nclient := natsClient.NewNATSClient(ServiceName, os.Getenv("NATS_URL"))
-	nclient.Js.AddStream(&nats.StreamConfig{
-		Name:       "BACKEND_MASTER_CLASS",
-		Subjects:   []string{"BACKEND_MASTER_CLASS.*"},
-		MaxMsgSize: 1024 * 1024 * 20,
-		Retention:  nats.WorkQueuePolicy,
-	})
-	
-	kv := kvstore.NewNATSKVStore(os.Getenv("NATS_URL"))
+	cfg := config.MustLoad()
 
 	// dsn := "postgres://user:password@localhost:5433/dbname"
-	dsn := kv.GetString("DATABASE_DSN")
-	db, err := repository.InitDB(dsn)
+	db, err := repository.InitDB(cfg.GormDSN)
 	if err != nil {
-		logger.Fatal().Err(err).Msg("error initializing db")
+		log.Fatal("error initializing db")
 	}
 
 	repo := repository.NewRepository(db)
-	usecase := usecase.NewUsecase(*repo, &logger)
+	usecase := usecase.NewUsecase(*repo)
 	handler := http.NewHandler(*usecase)
 
-	port := kv.GetString("SERVER_PORT")
 	router := handler.InitHandler()
-	if err := router.Run(port); err != nil {
-		logger.Fatal().Err(err).Msg("error running server")
+	if err := router.Run(cfg.HTTPServer.Port); err != nil {
+		log.Fatal("error running server")
 	}
 }

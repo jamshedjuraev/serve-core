@@ -1,16 +1,6 @@
 version: '3.8'
 
 services:
-  nats:
-    image: nats:2
-    container_name: nats
-    command: "--jetstream -m 8222"
-    ports:
-      - "4222:4222"
-      - "8222:8222"
-      - "6222:6222"
-    networks:
-      - todo-list
 
   database:
     image: postgres:16

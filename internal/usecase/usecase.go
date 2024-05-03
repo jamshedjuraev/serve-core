@@ -6,20 +6,17 @@ import (
 	"github.com/JamshedJ/backend-master-class-course/internal/delivery/dto"
 	"github.com/JamshedJ/backend-master-class-course/internal/domain"
 	"github.com/JamshedJ/backend-master-class-course/internal/repository"
-	"github.com/rs/zerolog"
 )
 
 type Usecase struct {
 	repo repository.Repository
 	TodoUsecase
 	AuthUsecase
-	logger *zerolog.Logger
 }
 
-func NewUsecase(repo repository.Repository, logger *zerolog.Logger) *Usecase {
+func NewUsecase(repo repository.Repository) *Usecase {
 	return &Usecase{
 		repo:   repo,
-		logger: logger,
 	}
 }
 
